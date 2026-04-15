@@ -123,9 +123,69 @@
     }
 
     .logo-wrap img {
-      height: 40px;
+      height: 48px;
       width: auto;
       display: block;
+    }
+
+    .hero-sticker-track {
+      position: absolute;
+      top: 84px;
+      left: 0;
+      right: 0;
+      z-index: 4;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: rgba(20, 20, 20, 0.78);
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .sticker-rail {
+      display: flex;
+      width: max-content;
+      animation: stickerLoop 18s linear infinite;
+    }
+
+    .sticker-set {
+      display: flex;
+      flex-shrink: 0;
+    }
+
+    .sticker-item {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 12px;
+      white-space: nowrap;
+    }
+
+    .sticker-icon {
+      width: 26px;
+      height: 18px;
+      stroke: var(--yellow);
+      fill: none;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.92;
+      animation: iconFloat 1.8s ease-in-out infinite;
+    }
+
+    .sticker-item:nth-child(odd) .sticker-icon {
+      stroke: #cfcfcf;
+      opacity: 0.74;
+      animation-delay: 0.35s;
+    }
+
+    @keyframes iconFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-1.6px); }
+    }
+
+    @keyframes stickerLoop {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
     }
 
     .nav-links {
@@ -471,10 +531,23 @@
     }
 
     .category-icon {
-      font-size: 1.2rem;
-      color: var(--muted);
+      width: 28px;
+      height: 20px;
       margin-bottom: 10px;
-      letter-spacing: 0.12em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .category-icon svg {
+      width: 28px;
+      height: 20px;
+      stroke: #b8b8b8;
+      fill: none;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.9;
     }
 
     .category-name {
@@ -925,6 +998,33 @@
       text-align: right;
     }
 
+    .floating-whatsapp {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      border: 1px solid #1a8f48;
+      background: #25D366;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1200;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.38);
+      transition: transform 0.2s ease;
+    }
+
+    .floating-whatsapp:hover {
+      transform: translateY(-3px);
+    }
+
+    .floating-whatsapp svg {
+      width: 30px;
+      height: 30px;
+      fill: #f2fff7;
+    }
+
     /* Reveal */
     .reveal {
       opacity: 0;
@@ -1003,6 +1103,10 @@
         padding-bottom: 180px;
       }
 
+      .hero-sticker-track {
+        top: 80px;
+      }
+
       .hero h1 {
         font-size: clamp(2.45rem, 14vw, 3.4rem);
       }
@@ -1060,6 +1164,10 @@
   </div>
 
   <section class="hero" id="inicio">
+    <div class="hero-sticker-track" aria-hidden="true">
+      <div class="sticker-rail" id="stickerRail"></div>
+    </div>
+
     <div class="hero-content reveal">
       <span class="label">Importacion y venta de maquinaria pesada</span>
       <h1>Potencia Sin Limites</h1>
@@ -1087,32 +1195,32 @@
       <div class="category-grid">
         <article class="category-card">
           <div class="category-num">01</div>
-          <div class="category-icon">⌘</div>
+          <div class="category-icon" aria-hidden="true"><svg viewBox="0 0 32 22"><rect x="2" y="8" width="14" height="8" rx="1"/><line x1="16" y1="12" x2="26" y2="6"/><line x1="26" y1="6" x2="30" y2="8"/><circle cx="8" cy="18" r="2.3"/><circle cx="18" cy="18" r="2.3"/></svg></div>
           <h3 class="category-name">Excavadoras</h3>
         </article>
         <article class="category-card">
           <div class="category-num">02</div>
-          <div class="category-icon">▣</div>
+          <div class="category-icon" aria-hidden="true"><svg viewBox="0 0 32 22"><rect x="4" y="9" width="12" height="7" rx="1"/><rect x="16" y="7" width="8" height="4" rx="1"/><line x1="24" y1="9" x2="30" y2="5"/><line x1="30" y1="5" x2="31" y2="7"/><circle cx="9" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/></svg></div>
           <h3 class="category-name">Tractores</h3>
         </article>
         <article class="category-card">
           <div class="category-num">03</div>
-          <div class="category-icon">⟡</div>
+          <div class="category-icon" aria-hidden="true"><svg viewBox="0 0 32 22"><rect x="3" y="8" width="15" height="8" rx="1"/><polyline points="18,10 24,10 28,13 24,16 18,16"/><circle cx="9" cy="18" r="2.3"/><circle cx="18" cy="18" r="2.3"/></svg></div>
           <h3 class="category-name">Gruas</h3>
         </article>
         <article class="category-card">
           <div class="category-num">04</div>
-          <div class="category-icon">◫</div>
+          <div class="category-icon" aria-hidden="true"><svg viewBox="0 0 32 22"><rect x="3" y="9" width="14" height="7" rx="1"/><line x1="17" y1="11" x2="26" y2="8"/><line x1="26" y1="8" x2="30" y2="10"/><circle cx="8" cy="18" r="2.2"/><circle cx="17" cy="18" r="2.2"/></svg></div>
           <h3 class="category-name">Montacargas</h3>
         </article>
         <article class="category-card">
           <div class="category-num">05</div>
-          <div class="category-icon">⎍</div>
+          <div class="category-icon" aria-hidden="true"><svg viewBox="0 0 32 22"><rect x="3" y="8" width="13" height="7" rx="1"/><line x1="16" y1="11" x2="24" y2="11"/><line x1="24" y1="11" x2="28" y2="14"/><line x1="24" y1="11" x2="28" y2="8"/><circle cx="8" cy="18" r="2.2"/><circle cx="16" cy="18" r="2.2"/></svg></div>
           <h3 class="category-name">Compactadoras</h3>
         </article>
         <article class="category-card">
           <div class="category-num">06</div>
-          <div class="category-icon">◈</div>
+          <div class="category-icon" aria-hidden="true"><svg viewBox="0 0 32 22"><rect x="2" y="9" width="13" height="7" rx="1"/><polyline points="15,10 23,8 26,10 23,12 15,12"/><circle cx="8" cy="18" r="2.3"/><circle cx="16" cy="18" r="2.3"/></svg></div>
           <h3 class="category-name">Equipos Especiales</h3>
         </article>
       </div>
@@ -1131,6 +1239,8 @@
         <button class="filter-btn" data-filter="Cargadoras">Cargadoras</button>
         <button class="filter-btn" data-filter="Motoniveladoras">Motoniveladoras</button>
         <button class="filter-btn" data-filter="Compactadoras">Compactadoras</button>
+        <button class="filter-btn" data-filter="Bulldozer">Bulldozer</button>
+        <button class="filter-btn" data-filter="Otros">Otros</button>
       </div>
 
       <div class="catalog-grid" id="catalogGrid">
@@ -1210,6 +1320,28 @@
           <p class="machine-price">Consultar precio</p>
           <button class="detail-btn">Ver detalles -></button>
         </article>
+
+        <article class="machine-card" data-category="Bulldozer" data-producto="Bulldozer Caterpillar" data-descripcion="Bulldozer para empuje de material y apertura de terreno en operaciones de alto impacto y movimiento de suelo.">
+          <div class="machine-media">
+            <img src="Pala caterpillar.jpg" alt="Bulldozer Caterpillar" loading="lazy" />
+          </div>
+          <span class="badge">Bulldozer</span>
+          <h3 class="machine-name">Bulldozer Caterpillar</h3>
+          <p class="machine-desc">Empuje potente para nivelacion y preparacion de terreno.</p>
+          <p class="machine-price">Consultar precio</p>
+          <button class="detail-btn">Ver detalles -></button>
+        </article>
+
+        <article class="machine-card" data-category="Otros" data-producto="Maquinaria Especial Toledo" data-descripcion="Soluciones de maquinaria bajo requerimiento para proyectos especificos, con importacion personalizada.">
+          <div class="machine-media">
+            <img src="ImagenAdicional.avif" alt="Maquinaria especial Toledo" loading="lazy" />
+          </div>
+          <span class="badge">Otros</span>
+          <h3 class="machine-name">Maquinaria Especial Toledo</h3>
+          <p class="machine-desc">Opciones especiales para obra, agroindustria y mineria.</p>
+          <p class="machine-price">Consultar precio</p>
+          <button class="detail-btn">Ver detalles -></button>
+        </article>
       </div>
 
       <p class="catalog-note">* Catalogo visual actualizado con maquinaria real disponible de Toledo Machinery.</p>
@@ -1224,11 +1356,13 @@
         <div class="about-text">
           <p>Toledo Machinery se especializa en importacion y comercializacion de maquinaria pesada bajo demanda para construccion, agroindustria y operaciones especializadas.</p>
           <p>Trabajamos con multiples marcas y especificaciones tecnicas para asegurar que cada cliente reciba exactamente el equipo que su operacion requiere.</p>
-          <p>Gestionamos logistica de entrega a nivel nacional con enfoque en tiempos, confiabilidad y soporte tecnico desde la decision de compra.</p>
+          <p>Gestionamos logistica de entrega a nivel nacional e internacional con enfoque en tiempos, confiabilidad y soporte tecnico desde la decision de compra.</p>
           <ul class="feature-list">
             <li>Importacion bajo pedido</li>
             <li>Asesoria tecnica incluida</li>
             <li>Financiamiento disponible</li>
+            <li>Despacho Aduanero incluido</li>
+            <li>Ventas y consignaciones</li>
           </ul>
         </div>
         <div class="about-art" aria-hidden="true">
@@ -1304,11 +1438,49 @@
     </div>
   </footer>
 
+  <a class="floating-whatsapp" href="https://wa.me/59178040390?text=Hola%2C%20quiero%20cotizar%20maquinaria%20con%20Toledo%20Machinery." target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp">
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M16.02 3.2c-7.03 0-12.74 5.64-12.74 12.62 0 2.23.59 4.41 1.72 6.33L3.2 28.8l6.85-1.78a12.88 12.88 0 0 0 5.97 1.52h.01c7.03 0 12.76-5.64 12.76-12.62S23.06 3.2 16.03 3.2zm0 22.98h-.01a10.7 10.7 0 0 1-5.44-1.49l-.39-.23-4.06 1.06 1.08-3.95-.25-.4a10.42 10.42 0 0 1-1.62-5.6c0-5.77 4.73-10.46 10.56-10.46 5.82 0 10.56 4.7 10.56 10.46 0 5.78-4.74 10.47-10.57 10.47zm5.79-7.94c-.32-.16-1.88-.92-2.18-1.02-.29-.1-.5-.16-.71.16-.21.32-.82 1.02-1 1.23-.19.21-.37.24-.69.08-.32-.16-1.34-.49-2.55-1.56-.95-.84-1.6-1.88-1.79-2.2-.19-.32-.02-.49.14-.65.14-.14.32-.37.48-.55.16-.19.21-.32.32-.53.11-.21.05-.4-.03-.56-.08-.16-.71-1.71-.97-2.34-.26-.63-.53-.54-.71-.55h-.61c-.21 0-.56.08-.85.4-.29.32-1.12 1.09-1.12 2.66 0 1.57 1.15 3.08 1.31 3.29.16.21 2.25 3.58 5.56 4.87.79.31 1.4.5 1.88.64.79.25 1.5.22 2.07.14.63-.09 1.88-.77 2.15-1.52.27-.75.27-1.4.19-1.53-.08-.13-.29-.21-.61-.37z"/>
+    </svg>
+  </a>
+
   <script>
     const nav = document.getElementById("nav");
     const menuBtn = document.getElementById("menuBtn");
     const mobileMenu = document.getElementById("mobileMenu");
     const mobileLinks = mobileMenu.querySelectorAll("a");
+    const stickerRail = document.getElementById("stickerRail");
+
+    const stickerIcons = [
+      '<svg class="sticker-icon" viewBox="0 0 32 22"><rect x="2" y="8" width="14" height="8" rx="1"/><line x1="16" y1="12" x2="26" y2="6"/><line x1="26" y1="6" x2="30" y2="8"/><circle cx="8" cy="18" r="2.3"/><circle cx="18" cy="18" r="2.3"/></svg>',
+      '<svg class="sticker-icon" viewBox="0 0 32 22"><rect x="4" y="9" width="12" height="7" rx="1"/><rect x="16" y="7" width="8" height="4" rx="1"/><line x1="24" y1="9" x2="30" y2="5"/><line x1="30" y1="5" x2="31" y2="7"/><circle cx="9" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/></svg>',
+      '<svg class="sticker-icon" viewBox="0 0 32 22"><rect x="3" y="8" width="15" height="8" rx="1"/><polyline points="18,10 24,10 28,13 24,16 18,16"/><circle cx="9" cy="18" r="2.3"/><circle cx="18" cy="18" r="2.3"/></svg>',
+      '<svg class="sticker-icon" viewBox="0 0 32 22"><rect x="3" y="9" width="14" height="7" rx="1"/><line x1="17" y1="11" x2="26" y2="8"/><line x1="26" y1="8" x2="30" y2="10"/><circle cx="8" cy="18" r="2.2"/><circle cx="17" cy="18" r="2.2"/></svg>',
+      '<svg class="sticker-icon" viewBox="0 0 32 22"><rect x="3" y="8" width="13" height="7" rx="1"/><line x1="16" y1="11" x2="24" y2="11"/><line x1="24" y1="11" x2="28" y2="14"/><line x1="24" y1="11" x2="28" y2="8"/><circle cx="8" cy="18" r="2.2"/><circle cx="16" cy="18" r="2.2"/></svg>',
+      '<svg class="sticker-icon" viewBox="0 0 32 22"><rect x="2" y="9" width="13" height="7" rx="1"/><polyline points="15,10 23,8 26,10 23,12 15,12"/><circle cx="8" cy="18" r="2.3"/><circle cx="16" cy="18" r="2.3"/></svg>'
+    ];
+
+    function buildStickerSet() {
+      const set = document.createElement("div");
+      set.className = "sticker-set";
+      for (let i = 0; i < 30; i += 1) {
+        const item = document.createElement("div");
+        item.className = "sticker-item";
+        item.innerHTML = stickerIcons[i % stickerIcons.length];
+        set.appendChild(item);
+      }
+      return set;
+    }
+
+    function fillStickerRail() {
+      stickerRail.innerHTML = "";
+      const firstSet = buildStickerSet();
+      const secondSet = buildStickerSet();
+      stickerRail.appendChild(firstSet);
+      stickerRail.appendChild(secondSet);
+    }
+
+    fillStickerRail();
 
     function handleScrollNav() {
       nav.classList.toggle("scrolled", window.scrollY > 12);
