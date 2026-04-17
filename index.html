@@ -563,8 +563,17 @@
     .filter-bar {
       display: flex;
       flex-wrap: wrap;
+      align-items: center;
       gap: 10px;
       margin-bottom: 26px;
+    }
+
+    .filter-separator {
+      width: 1px;
+      height: 28px;
+      background: var(--border);
+      opacity: 0.9;
+      margin: 0 2px;
     }
 
     .filter-btn {
@@ -587,6 +596,19 @@
       color: var(--black);
       border-color: var(--yellow);
       background: var(--yellow);
+    }
+
+    .filter-btn-import {
+      color: #111111;
+      border-color: #b98300;
+      background: linear-gradient(90deg, #f3bd2f, #d99600);
+    }
+
+    .filter-btn-import:hover,
+    .filter-btn-import.active {
+      color: #111111;
+      border-color: #ffcb45;
+      background: linear-gradient(90deg, #ffd15a, #e7a600);
     }
 
     .catalog-grid {
@@ -1322,6 +1344,8 @@
         <button class="filter-btn" data-filter="Compactadoras">Compactadoras</button>
         <button class="filter-btn" data-filter="Bulldozer">Bulldozer</button>
         <button class="filter-btn" data-filter="Otros">Otros</button>
+        <span class="filter-separator" aria-hidden="true"></span>
+        <button class="filter-btn filter-btn-import" data-filter="Importacion">Catalogo de Importacion</button>
       </div>
 
       <div class="catalog-grid" id="catalogGrid">
@@ -1421,6 +1445,39 @@
           <h3 class="machine-name">Maquinaria Especial Toledo</h3>
           <p class="machine-desc">Opciones especiales para obra, agroindustria y mineria.</p>
           <p class="machine-price">Consultar precio</p>
+          <button class="detail-btn">Ver detalles -></button>
+        </article>
+
+        <article class="machine-card" data-category="Importacion" data-producto="Maquinaria Pedido 1" data-descripcion="Unidad de maquinaria pesada disponible para importacion a pedido segun especificaciones del cliente.">
+          <div class="machine-media">
+            <img src="Maquinaria Pedido 1.jpg" alt="Maquinaria Pedido 1" loading="lazy" />
+          </div>
+          <span class="badge">Importacion</span>
+          <h3 class="machine-name">Maquinaria Pedido 1</h3>
+          <p class="machine-desc">Catalogo de maquinaria para importacion directa por especificacion.</p>
+          <p class="machine-price">Consultar importacion</p>
+          <button class="detail-btn">Ver detalles -></button>
+        </article>
+
+        <article class="machine-card" data-category="Importacion" data-producto="Maquinaria Pedido 2" data-descripcion="Unidad de maquinaria pesada para importacion bajo pedido con asesoramiento tecnico y logistico.">
+          <div class="machine-media">
+            <img src="Maquinaria Pedido 2.jpg" alt="Maquinaria Pedido 2" loading="lazy" />
+          </div>
+          <span class="badge">Importacion</span>
+          <h3 class="machine-name">Maquinaria Pedido 2</h3>
+          <p class="machine-desc">Equipo para importacion profesional bajo pedido con configuracion personalizada.</p>
+          <p class="machine-price">Consultar importacion</p>
+          <button class="detail-btn">Ver detalles -></button>
+        </article>
+
+        <article class="machine-card" data-category="Importacion" data-producto="Bulldozer de Importacion a Pedido" data-descripcion="Bulldozer en modalidad de importacion para obras de alto impacto, con asesoramiento tecnico completo.">
+          <div class="machine-media">
+            <img src="Pala caterpillar.jpg" alt="Bulldozer de importacion" loading="lazy" />
+          </div>
+          <span class="badge">Importacion</span>
+          <h3 class="machine-name">Bulldozer a Pedido</h3>
+          <p class="machine-desc">Catalogo de importacion de maquinaria pesada para proyectos exigentes.</p>
+          <p class="machine-price">Consultar importacion</p>
           <button class="detail-btn">Ver detalles -></button>
         </article>
       </div>
