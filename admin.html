@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Toledo Machinery | Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --black: #0C0C0C;
+      --dark: #141414;
+      --card: #1A1A1A;
+      --yellow: #F5A800;
+      --yellow2: #FFB800;
+      --white: #E8E8E8;
+      --muted: #888888;
+      --border: #2A2A2A;
+      --success: #41b26c;
+      --danger: #cf4b4b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: "Barlow", sans-serif;
+      background: var(--black);
+      color: var(--white);
+      line-height: 1.5;
+    }
+
+    .state {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.28s ease, visibility 0.28s ease;
+      position: absolute;
+      inset: 0;
+    }
+
+    .state.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      position: relative;
+      min-height: 100dvh;
+    }
+
+    .auth-shell {
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: var(--black);
+    }
+
+    .auth-card {
+      width: min(520px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 48px;
+    }
+
+    .auth-logo {
+      height: 60px;
+      width: auto;
+      display: block;
+      margin: 0 auto 20px;
+    }
+
+    .auth-title {
+      font-family: "Barlow Condensed", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 800;
+      font-size: clamp(2rem, 4vw, 2.6rem);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-family: "Barlow Condensed", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      font: inherit;
+      color: inherit;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid var(--border);
+      background: #171717;
+      color: var(--white);
+      border-radius: 8px;
+      padding: 11px 12px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--yellow);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid var(--yellow);
+      background: linear-gradient(90deg, var(--yellow), var(--yellow2));
+      color: var(--black);
+      font-family: "Barlow Condensed", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 800;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .message {
+      margin-top: 10px;
+      min-height: 22px;
+      font-size: 0.92rem;
+    }
+
+    .message.error {
+      color: var(--danger);
+    }
+
+    .message.success {
+      color: var(--success);
+    }
+
+    .dashboard {
+      min-height: 100dvh;
+      background: var(--black);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(20, 20, 20, 0.9);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+
+    .topbar-inner {
+      width: min(1220px, 94%);
+      margin: 0 auto;
+      min-height: 78px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .topbar-logo {
+      height: 40px;
+      width: auto;
+      display: block;
+    }
+
+    .topbar-title {
+      font-family: "Barlow Condensed", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      text-align: center;
+      color: var(--white);
+      font-size: 1.3rem;
+    }
+
+    .btn-ghost {
+      justify-self: end;
+      min-height: 42px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--white);
+      border-radius: 8px;
+      padding: 0 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+    }
+
+    .layout {
+      width: min(1220px, 94%);
+      margin: 22px auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .panel-title {
+      font-family: "Barlow Condensed", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .accent-line {
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--yellow), var(--yellow2));
+      margin-bottom: 16px;
+    }
+
+    .char-counter {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .file-meta {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .preview-wrap {
+      margin-top: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      display: none;
+      max-height: 200px;
+      background: #171717;
+    }
+
+    .preview-wrap.show {
+      display: block;
+    }
+
+    .preview-wrap img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .progress {
+      margin: 10px 0;
+      height: 8px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      background: #121212;
+      display: none;
+    }
+
+    .progress.show {
+      display: block;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--yellow), var(--yellow2));
+      transition: width 0.2s ease;
+    }
+
+    .machine-list {
+      display: grid;
+      gap: 10px;
+      max-height: 72dvh;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .machine-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 60px 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .machine-thumb {
+      width: 60px;
+      height: 60px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #171717;
+    }
+
+    .machine-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .machine-name {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      line-height: 1.05;
+    }
+
+    .cat-badge {
+      margin-top: 4px;
+      display: inline-block;
+      background: var(--yellow);
+      color: var(--black);
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-family: "Barlow Condensed", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .delete-btn {
+      width: 34px;
+      height: 34px;
+      border: 1px solid #6d2a2a;
+      border-radius: 8px;
+      background: #311818;
+      color: #ffb8b8;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .empty {
+      min-height: 200px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    @media (min-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .auth-card {
+        padding: 28px;
+      }
+
+      .topbar-inner {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        padding: 10px 0;
+      }
+
+      .btn-ghost {
+        justify-self: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section id="authState" class="state active" aria-live="polite">
+    <div class="auth-shell">
+      <div class="auth-card">
+        <img src="Logo.jpg" alt="Toledo Machinery" class="auth-logo" />
+        <h1 class="auth-title">Acceso Administrador</h1>
+        <form id="loginForm" novalidate onsubmit="return false">
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input id="loginEmail" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input id="loginPassword" name="password" type="password" autocomplete="current-password" required />
+          </div>
+          <button id="loginBtn" type="button" class="btn-primary">Ingresar</button>
+          <p id="loginMessage" class="message" role="alert"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="appState" class="state" aria-live="polite">
+    <div class="dashboard">
+      <header class="topbar">
+        <div class="topbar-inner">
+          <img src="Logo.jpg" alt="Toledo Machinery" class="topbar-logo" />
+          <h2 class="topbar-title">Panel de Administración</h2>
+          <button id="logoutBtn" class="btn-ghost" type="button">Cerrar Sesión</button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel">
+          <h3 class="panel-title">Publicar Maquinaria</h3>
+          <div class="accent-line"></div>
+          <form id="machineForm" novalidate>
+            <div class="form-group">
+              <label for="machineName">Nombre</label>
+              <input id="machineName" type="text" placeholder="Ej: Excavadora CAT 320" required />
+            </div>
+
+            <div class="form-group">
+              <label for="machineCategory">Categoría</label>
+              <select id="machineCategory" required>
+                <option value="">Seleccionar...</option>
+                <option>Excavadoras</option>
+                <option>Retroexcavadoras</option>
+                <option>Cargadoras</option>
+                <option>Motoniveladoras</option>
+                <option>Compactadoras</option>
+                <option>Bulldozer</option>
+                <option>Otros</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="machineDescription">Descripción</label>
+              <textarea id="machineDescription" maxlength="300" required></textarea>
+              <p class="char-counter"><span id="charCount">0</span>/300</p>
+            </div>
+
+            <div class="form-group">
+              <label for="machinePhoto">Foto</label>
+              <input id="machinePhoto" type="file" accept="image/jpeg,image/png,image/webp" required />
+              <p class="file-meta">Formatos: JPG, PNG, WEBP</p>
+              <div id="previewWrap" class="preview-wrap">
+                <img id="previewImage" alt="Vista previa de la maquinaria" />
+              </div>
+            </div>
+
+            <div id="uploadProgress" class="progress" aria-hidden="true">
+              <div id="uploadProgressFill" class="progress-fill"></div>
+            </div>
+
+            <button id="publishBtn" type="submit" class="btn-primary">Publicar Máquina</button>
+            <p id="publishMessage" class="message" role="alert"></p>
+          </form>
+        </section>
+
+        <section class="panel">
+          <h3 class="panel-title">Maquinaria Publicada</h3>
+          <div class="accent-line"></div>
+          <div id="machineList" class="machine-list"></div>
+        </section>
+      </main>
+    </div>
+  </section>
+
+  <script>
+    const SUPABASE_URL = 'https://arytxnnbtjjvplgutspg.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeXR4bm5idGpqdnBsZ3V0c3BnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NTQyMzQsImV4cCI6MjA5MjAzMDIzNH0.Y-QStBXUuRWbMhDKzwZ9uTXQClKLL08Bot0zhtGR3SY';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const authState = document.getElementById('authState');
+    const appState = document.getElementById('appState');
+
+    const loginForm = document.getElementById('loginForm');
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassword = document.getElementById('loginPassword');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginMessage = document.getElementById('loginMessage');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    const machineForm = document.getElementById('machineForm');
+    const machineName = document.getElementById('machineName');
+    const machineCategory = document.getElementById('machineCategory');
+    const machineDescription = document.getElementById('machineDescription');
+    const machinePhoto = document.getElementById('machinePhoto');
+    const previewWrap = document.getElementById('previewWrap');
+    const previewImage = document.getElementById('previewImage');
+    const charCount = document.getElementById('charCount');
+    const publishBtn = document.getElementById('publishBtn');
+    const publishMessage = document.getElementById('publishMessage');
+    const machineList = document.getElementById('machineList');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const uploadProgressFill = document.getElementById('uploadProgressFill');
+
+    let selectedFile = null;
+    let previewUrl = '';
+
+    function setState(isLoggedIn) {
+      authState.classList.toggle('active', !isLoggedIn);
+      appState.classList.toggle('active', isLoggedIn);
+      if (isLoggedIn) loadMachines();
+    }
+
+    function setMessage(el, text, type = '') {
+      el.textContent = text;
+      el.className = 'message';
+      if (type) el.classList.add(type);
+    }
+
+    function sanitizeFileName(name) {
+      return name
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9._-]/g, '_');
+    }
+
+    function setPublishLoading(isLoading) {
+      publishBtn.disabled = isLoading;
+      publishBtn.textContent = isLoading ? 'PUBLICANDO...' : 'Publicar Máquina';
+    }
+
+    function startFakeProgress() {
+      uploadProgress.classList.add('show');
+      uploadProgressFill.style.width = '5%';
+      let progress = 5;
+      const timer = setInterval(() => {
+        progress = Math.min(progress + Math.random() * 14, 90);
+        uploadProgressFill.style.width = `${progress}%`;
+      }, 180);
+      return () => {
+        clearInterval(timer);
+        uploadProgressFill.style.width = '100%';
+        setTimeout(() => {
+          uploadProgress.classList.remove('show');
+          uploadProgressFill.style.width = '0%';
+        }, 350);
+      };
+    }
+
+    function resetPreview() {
+      selectedFile = null;
+      machinePhoto.value = '';
+      previewWrap.classList.remove('show');
+      previewImage.removeAttribute('src');
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+        previewUrl = '';
+      }
+    }
+
+    function extractStoragePath(imageUrl) {
+      const marker = '/storage/v1/object/public/imagenes-maquinaria/';
+      const idx = imageUrl.indexOf(marker);
+      if (idx === -1) return null;
+      const raw = imageUrl.slice(idx + marker.length).split('?')[0];
+      return decodeURIComponent(raw);
+    }
+
+    function createMachineItem(machine) {
+      const item = document.createElement('article');
+      item.className = 'machine-item';
+
+      const thumb = document.createElement('div');
+      thumb.className = 'machine-thumb';
+      thumb.innerHTML = `<img src="${machine.imagen_url}" alt="${machine.nombre}">`;
+
+      const info = document.createElement('div');
+      info.innerHTML = `
+        <h4 class="machine-name">${machine.nombre}</h4>
+        <span class="cat-badge">${machine.categoria}</span>
+      `;
+
+      const del = document.createElement('button');
+      del.className = 'delete-btn';
+      del.type = 'button';
+      del.setAttribute('aria-label', `Eliminar ${machine.nombre}`);
+      del.textContent = 'X';
+      del.addEventListener('click', async () => {
+        del.disabled = true;
+        try {
+          const filePath = extractStoragePath(machine.imagen_url);
+          if (filePath) {
+            await supabaseClient.storage.from('imagenes-maquinaria').remove([filePath]);
+          }
+          const { error } = await supabaseClient.from('machinery').delete().eq('id', machine.id);
+          if (error) throw error;
+          await loadMachines();
+        } catch (error) {
+          alert(`Error al eliminar: ${error.message || error}`);
+        } finally {
+          del.disabled = false;
+        }
+      });
+
+      item.appendChild(thumb);
+      item.appendChild(info);
+      item.appendChild(del);
+      return item;
+    }
+
+    async function loadMachines() {
+      machineList.innerHTML = '<div class="empty">Cargando maquinaria...</div>';
+      const { data, error } = await supabaseClient
+        .from('machinery')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        machineList.innerHTML = `<div class="empty">Error al cargar: ${error.message}</div>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        machineList.innerHTML = '<div class="empty">No hay maquinaria publicada aún</div>';
+        return;
+      }
+
+      machineList.innerHTML = '';
+      data.forEach(machine => machineList.appendChild(createMachineItem(machine)));
+    }
+
+    machineDescription.addEventListener('input', () => {
+      charCount.textContent = String(machineDescription.value.length);
+    });
+
+    machinePhoto.addEventListener('change', () => {
+      setMessage(publishMessage, '');
+      const file = machinePhoto.files?.[0];
+      if (!file) {
+        resetPreview();
+        return;
+      }
+
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        resetPreview();
+        setMessage(publishMessage, 'Archivo inválido. Solo JPG, PNG o WEBP.', 'error');
+        return;
+      }
+
+      selectedFile = file;
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      previewUrl = URL.createObjectURL(file);
+      previewImage.src = previewUrl;
+      previewWrap.classList.add('show');
+    });
+
+    loginBtn.addEventListener('click', async () => {
+      setMessage(loginMessage, '');
+      loginBtn.disabled = true;
+
+      const email = loginEmail.value.trim();
+      const password = loginPassword.value;
+
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) {
+        setMessage(loginMessage, error.message || 'Credenciales incorrectas.', 'error');
+      }
+
+      loginBtn.disabled = false;
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+    });
+
+    machineForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      setMessage(publishMessage, '');
+
+      const nombre = machineName.value.trim();
+      const categoria = machineCategory.value;
+      const descripcion = machineDescription.value.trim();
+
+      if (!nombre || !categoria || !descripcion) {
+        setMessage(publishMessage, 'Completa todos los campos obligatorios.', 'error');
+        return;
+      }
+
+      if (!selectedFile) {
+        setMessage(publishMessage, 'Debes seleccionar una imagen válida.', 'error');
+        return;
+      }
+
+      setPublishLoading(true);
+      const stopProgress = startFakeProgress();
+
+      try {
+        const fileName = sanitizeFileName(selectedFile.name);
+        const filePath = `${Date.now()}_${fileName}`;
+
+        const { error: uploadError } = await supabaseClient
+          .storage
+          .from('imagenes-maquinaria')
+          .upload(filePath, selectedFile);
+
+        if (uploadError) throw uploadError;
+
+        const { data: publicData } = supabaseClient
+          .storage
+          .from('imagenes-maquinaria')
+          .getPublicUrl(filePath);
+
+        const { error: insertError } = await supabaseClient
+          .from('machinery')
+          .insert({
+            nombre,
+            categoria,
+            descripcion,
+            imagen_url: publicData.publicUrl
+          });
+
+        if (insertError) throw insertError;
+
+        setMessage(publishMessage, '¡Máquina publicada correctamente!', 'success');
+        machineForm.reset();
+        charCount.textContent = '0';
+        resetPreview();
+        await loadMachines();
+      } catch (error) {
+        setMessage(publishMessage, `Error al publicar: ${error.message || error}`, 'error');
+      } finally {
+        stopProgress();
+        setPublishLoading(false);
+      }
+    });
+
+    supabaseClient.auth.onAuthStateChange((_event, session) => {
+      setState(Boolean(session));
+    });
+
+    async function init() {
+      const { data, error } = await supabaseClient.auth.getSession();
+      if (error) {
+        setState(false);
+        return;
+      }
+      setState(Boolean(data.session));
+    }
+
+    init();
+  </script>
+</body>
+</html>
